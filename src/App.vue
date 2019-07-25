@@ -36,7 +36,7 @@ export default {
       errors: []
     };
   },
-  mounted() {
+  created() {
     axios
       .get('https://api.punkapi.com/v2/beers')
       .then(response => {
