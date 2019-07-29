@@ -1,9 +1,12 @@
 <template>
   <div id="app">
-    <div class="container">
-      <h1>Punk API</h1>
-      <h2>Brewdog's expansive back catalogue of beer</h2>
+    <header class="header" role="header">
+      <div class="container">
+        <h1 class="header__title">Punk API - Brewdog's expansive back catalogue of beer</h1>
+      </div>
+    </header>
 
+    <main role="content" class="container">
       <section v-if="errored">
         <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
       </section>
@@ -12,22 +15,22 @@
         <div v-if="loading">Loading...</div>
 
         <div class="beer-list" v-if="beers">
-          <div class="beer" v-for="beer in beers" :key="beer.id">
-            <h3>{{ beer.name }}</h3>
-
-            <p>{{ beer.description }}</p>
-          </div>
+          <Beer v-for="beer in beers" :beer="beer" :key="beer.id" />
         </div>
       </section>
-    </div>
+    </main>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import Beer from './components/Beer';
 
 export default {
   name: 'app',
+  components: {
+    Beer: Beer
+  },
   data() {
     return {
       beers: null,
@@ -52,31 +55,86 @@ export default {
 </script>
 
 <style lang="scss">
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ol,
+ul {
+  margin-left: 1.5rem;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 #app {
-  font-family: 'Fira Sans', Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #232323;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 .container {
   width: 96%;
-  max-width: 74rem;
-  margin: 2rem auto;
+  max-width: 80rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.header {
+  padding: 1.5rem;
+  background: #000;
+  color: #fff;
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+  }
 }
 
 .beer-list {
   display: grid;
-  grid-gap: 1rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  grid-gap: 3rem;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 
   @media screen and (min-width: 40rem) {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and (min-width: 64rem) {
-    grid-template-columns: repeat(4, 1fr);
   }
 }
 </style>
