@@ -44,7 +44,7 @@ export default {
     beer: Object
   },
   computed: {
-    foodPairings: function() {
+    foodPairings() {
       const items = this.beer.food_pairing;
       return items.slice(0, 3);
     }
