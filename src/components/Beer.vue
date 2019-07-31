@@ -1,24 +1,28 @@
 <template>
   <div class="beer">
     <div class="beer__media">
-      <img class="beer__img" :src="beer.image_url" :alt="beer.name" />
+      <img
+        class="beer__img"
+        :src="beer.image_url"
+        :alt="beer.name"
+        data-test="beer-image" />
     </div>
 
     <div class="beer__wrap">
       <div class="beer__body">
         <div class="beer__header">
           <div class="beer__info">
-            <h2 class="beer__title">{{ beer.name }}</h2>
-            <h3 class="beer__tagline">{{ beer.tagline }}</h3>
+            <h2 class="beer__title" data-test="beer-name">{{ beer.name }}</h2>
+            <h3 class="beer__tagline" data-test="beer-tagline">{{ beer.tagline }}</h3>
           </div>
 
           <div class="beer__abv">
             <div class="beer__abv-label">ALC.VOL</div>
-            <div class="beer__abv-percentage">{{ beer.abv }}%</div>
+            <div class="beer__abv-percentage" data-test="beer-abv">{{ beer.abv }}%</div>
           </div>
         </div>
 
-        <p class="beer__description">{{ beer.description }}</p>
+        <p class="beer__description" data-test="beer-description">{{ beer.description }}</p>
       </div>
 
       <div class="beer__pairings">
@@ -29,6 +33,7 @@
             class="beer__pairings-item"
             v-for="(item , index) in foodPairings"
             :key="index"
+            data-test="beer-food-pairing"
           >{{ item }}</li>
         </ul>
       </div>
