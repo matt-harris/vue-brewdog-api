@@ -1,4 +1,4 @@
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import Beer from '@/components/Beer';
 
 // Beer object from api to test against.
@@ -20,7 +20,7 @@ const beer = {
 
 // https://lmiller1990.github.io/vue-testing-handbook/components-with-props.html#refactor-with-a-factory-function
 const factory = (propsData) => {
-  return shallowMount(Beer, {
+  return mount(Beer, {
     propsData: {
       beer,
       ...propsData,
@@ -29,42 +29,43 @@ const factory = (propsData) => {
 };
 
 describe('Beer', () => {
-  it('renders without errors', () => {
-    const wrapper = factory();
-    expect(wrapper.isVueInstance()).toBeTruthy();
-  });
-
   it('renders beer image attributes', () => {
     const wrapper = factory();
-    expect(wrapper.find('.beer__img').attributes('src')).toBe(
+    expect(wrapper.find('[data-test="beer-image"]').attributes('src')).toBe(
       'https://images.punkapi.com/v2/192.png',
     );
-    expect(wrapper.find('.beer__img').attributes('alt')).toBe(beer.name);
+    expect(wrapper.find('[data-test="beer-image"]').attributes('alt')).toBe(
+      beer.name,
+    );
   });
 
   it('renders beer.name', () => {
     const wrapper = factory();
-    expect(wrapper.find('.beer__title').text()).toBe(beer.name);
+    expect(wrapper.find('[data-test="beer-name"]').text()).toBe(beer.name);
   });
 
   it('renders beer.tagline', () => {
     const wrapper = factory();
-    expect(wrapper.find('.beer__tagline').text()).toBe(beer.tagline);
+    expect(wrapper.find('[data-test="beer-tagline"]').text()).toBe(
+      beer.tagline,
+    );
   });
 
   it('renders beer.abv', () => {
     const wrapper = factory();
-    expect(wrapper.find('.beer__abv-percentage').text()).toBe(beer.abv + '%');
+    expect(wrapper.find('[data-test="beer-abv"]').text()).toBe(beer.abv + '%');
   });
 
   it('renders beer.description', () => {
     const wrapper = factory();
-    expect(wrapper.find('.beer__description').text()).toBe(beer.description);
+    expect(wrapper.find('[data-test="beer-description"]').text()).toBe(
+      beer.description,
+    );
   });
 
   it('renders the first three beer.food_pairing items', () => {
     const wrapper = factory();
-    const listItems = wrapper.findAll('.beer__pairings-item');
+    const listItems = wrapper.findAll('[data-test="beer-food-pairing"]');
     expect(listItems).toHaveLength(3);
   });
 });
