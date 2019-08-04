@@ -1,4 +1,6 @@
 module.exports = {
+  // Remove data-test attributes from production build.
+  // https://forum.vuejs.org/t/how-to-remove-attributes-from-tags-inside-vue-components/24138/9
   chainWebpack: (config) => {
     config.module
       .rule('vue')
