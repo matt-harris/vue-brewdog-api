@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <header class="header" role="header">
-      <div class="container">
+      <div class="header__wrap container">
+        <img class="header__logo" src="@/assets/logo.png" alt="Brewdog - Punk API" />
         <h1 class="header__title">Punk API - Brewdog's expansive back catalogue of beer</h1>
       </div>
     </header>
@@ -11,11 +12,33 @@
         <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
       </section>
 
-      <section v-else>
+      <section class="grid" v-else>
         <div v-if="loading">Loading...</div>
 
+        <div class="beer-filter">
+          <div class="beer-filter__item">
+            <label class="beer-filter__label">Search</label>
+            <input
+              class="beer-filter__input"
+              type="search"
+              placeholder="e.g. Punk IPA"
+              v-model="beerSearch"
+            />
+          </div>
+
+          <div class="beer-filter__item">
+            <label class="beer-filter__label">Filter by ABV</label>
+            <select class="beer-filter__input beer-filter__input--select" v-model="beerStrength">
+              <option value="all">All Beers</option>
+              <option value="weak">Weak (0 - 4.5%)</option>
+              <option value="medium">Medium (4.5% - 7.5%)</option>
+              <option value="strong">Strong (7.5% +)</option>
+            </select>
+          </div>
+        </div>
+
         <div class="beer-list" v-if="beers">
-          <Beer v-for="beer in beers" :beer="beer" :key="beer.id" />
+          <Beer v-for="beer in filterBeers" :beer="beer" :key="beer.id" />
         </div>
       </section>
     </main>
@@ -36,14 +59,52 @@ export default {
       beers: null,
       loading: true,
       errored: false,
-      errors: []
+      errors: [],
+      beerSearch: '',
+      beerStrength: 'all'
     };
+  },
+  computed: {
+    /**
+     * Filter beers.
+     *
+     * @returns {Array} The filtered beers.
+     */
+    filterBeers() {
+      const filtered = this.beers
+        .filter(beer =>
+          beer.name.toLowerCase().includes(this.beerSearch.toLowerCase())
+        )
+        .filter(beer => {
+          if (this.beerStrength == 'weak') {
+            return beer.abv <= 4.5;
+          } else if (this.beerStrength == 'medium') {
+            return beer.abv > 4.5 && beer.abv <= 7.5;
+          } else if (this.beerStrength == 'strong') {
+            return beer.abv > 7.5;
+          } else {
+            return beer;
+          }
+        });
+
+      return filtered;
+    }
   },
   created() {
     axios
       .get('https://api.punkapi.com/v2/beers')
       .then(response => {
         this.beers = response.data;
+
+        this.beers = this.beers.map(beer => ({
+          id: beer.id,
+          name: beer.name,
+          tagline: beer.tagline,
+          description: beer.description,
+          image_url: beer.image_url,
+          abv: beer.abv,
+          food_pairing: beer.food_pairing
+        }));
       })
       .catch(error => {
         this.errored = true;
@@ -95,7 +156,7 @@ img {
   font-family: 'Poppins', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #232323;
+  color: #333;
 }
 
 h1,
@@ -121,20 +182,76 @@ h6 {
   background: #000;
   color: #fff;
 
+  &__wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  &__logo {
+    width: 3rem;
+    margin-right: 1.5rem;
+  }
+
   &__title {
     font-size: 2rem;
     font-weight: 700;
   }
 }
 
-.beer-list {
+.grid {
   display: grid;
-  grid-gap: 3rem;
+  grid-gap: 1.5rem;
   margin-top: 3rem;
   margin-bottom: 3rem;
 
-  @media screen and (min-width: 40rem) {
-    grid-template-columns: repeat(2, 1fr);
+  @media screen and (min-width: 48rem) {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.beer-filter {
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: 48rem) {
+    grid-column: 1/4;
+  }
+
+  &__item {
+    padding: 1rem;
+    color: #fff;
+    background: #00afdb;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 0.125rem solid #000;
+
+    &--select {
+      height: 2.0625rem;
+    }
+  }
+}
+
+.beer-list {
+  @media screen and (min-width: 48rem) {
+    grid-column: 4/13;
+    display: grid;
+    grid-gap: 1.5rem;
+    grid-template-columns: 1fr 1fr;
   }
 }
 </style>
