@@ -1,18 +1,14 @@
 <template>
   <div class="beer">
     <div class="beer__media">
-      <img
-        class="beer__img"
-        :src="beer.image_url"
-        :alt="beer.name"
-        data-test="beer-image" />
+      <img class="beer__img" :src="beer.image_url" :alt="beer.name" data-test="beer-image" />
     </div>
 
     <div class="beer__wrap">
       <div class="beer__body">
         <div class="beer__header">
           <div class="beer__info">
-            <h2 class="beer__title" data-test="beer-name">{{ beer.name }}</h2>
+            <h2 class="beer__name" data-test="beer-name">{{ beer.name }}</h2>
             <h3 class="beer__tagline" data-test="beer-tagline">{{ beer.tagline }}</h3>
           </div>
 
@@ -49,6 +45,11 @@ export default {
     beer: Object
   },
   computed: {
+    /**
+     * Only show the first three food pairing suggestins.
+     *
+     * @returns {Array} The three food pairing suggestions.
+     */
     foodPairings() {
       const items = this.beer.food_pairing;
       return items.slice(0, 3);
@@ -91,7 +92,7 @@ export default {
     padding-right: 1rem;
   }
 
-  &__title {
+  &__name {
     margin-bottom: 0.25rem;
     font-size: 2rem;
   }
