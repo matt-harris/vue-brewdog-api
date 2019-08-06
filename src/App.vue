@@ -15,27 +15,25 @@
       <section class="grid" v-else>
         <div v-if="loading">Loading...</div>
 
-        <div class="beer-filter">
-          <div class="beer-filter__item">
-            <label class="beer-filter__label">Search</label>
+        <aside class="sidebar">
+          <BeerFilter label="Search">
             <input
               class="beer-filter__input"
               type="search"
               placeholder="e.g. Punk IPA"
               v-model="beerSearch"
             />
-          </div>
+          </BeerFilter>
 
-          <div class="beer-filter__item">
-            <label class="beer-filter__label">Filter by ABV</label>
+          <BeerFilter label="Filter by ABV">
             <select class="beer-filter__input beer-filter__input--select" v-model="beerStrength">
               <option value="all">All Beers</option>
               <option value="weak">Weak (0 - 4.5%)</option>
               <option value="medium">Medium (4.5% - 7.5%)</option>
               <option value="strong">Strong (7.5% +)</option>
             </select>
-          </div>
-        </div>
+          </BeerFilter>
+        </aside>
 
         <div class="beer-list" v-if="beers">
           <p
@@ -53,11 +51,13 @@
 <script>
 import axios from 'axios';
 import Beer from './components/Beer';
+import BeerFilter from './components/BeerFilter';
 
 export default {
   name: 'app',
   components: {
-    Beer: Beer
+    Beer: Beer,
+    BeerFilter: BeerFilter
   },
   data() {
     return {
@@ -76,20 +76,24 @@ export default {
      * @returns {Array} The filtered beers.
      */
     filterBeers() {
+      const LOW_STRENGTH = 'weak';
+      const MEDIUM_STRENGTH = 'medium';
+      const HIGH_STRENGTH = 'strong';
+      const ALL_STRENGTH = 'all';
+
       const filtered = this.beers
         .filter(beer =>
           beer.name.toLowerCase().includes(this.beerSearch.toLowerCase())
         )
         .filter(beer => {
-          if (this.beerStrength == 'weak') {
-            return beer.abv <= 4.5;
-          } else if (this.beerStrength == 'medium') {
-            return beer.abv > 4.5 && beer.abv <= 7.5;
-          } else if (this.beerStrength == 'strong') {
-            return beer.abv > 7.5;
-          } else {
-            return beer;
-          }
+          const strengths = {
+            [LOW_STRENGTH]: beer.abv <= 4.5,
+            [MEDIUM_STRENGTH]: beer.abv > 4.5 && beer.abv <= 7.5,
+            [HIGH_STRENGTH]: beer.abv > 7.5,
+            [ALL_STRENGTH]: beer
+          };
+
+          return strengths[this.beerStrength];
         });
 
       return filtered;
@@ -214,40 +218,12 @@ h6 {
   }
 }
 
-.beer-filter {
+.sidebar {
   display: flex;
   flex-direction: column;
 
   @media screen and (min-width: 48rem) {
     grid-column: 1/4;
-  }
-
-  &__item {
-    padding: 1rem;
-    color: #fff;
-    background: #00afdb;
-
-    &:not(:last-child) {
-      margin-bottom: 1rem;
-    }
-  }
-
-  &__label {
-    display: block;
-    margin-bottom: 0.25rem;
-    font-family: 'Oswald', sans-serif;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  &__input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 0.125rem solid #000;
-
-    &--select {
-      height: 2.0625rem;
-    }
   }
 }
 
