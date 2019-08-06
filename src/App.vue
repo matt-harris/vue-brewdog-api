@@ -38,6 +38,11 @@
         </div>
 
         <div class="beer-list" v-if="beers">
+          <p
+            v-if="filterBeers.length === 0"
+            class="beer-list__empty"
+          >No beers available to show, please try adjusting your filter criteria.</p>
+
           <Beer v-for="beer in filterBeers" :beer="beer" :key="beer.id" />
         </div>
       </section>
@@ -252,6 +257,13 @@ h6 {
     display: grid;
     grid-gap: 1.5rem;
     grid-template-columns: 1fr 1fr;
+  }
+
+  &__empty {
+    @media screen and (min-width: 48rem) {
+      grid-column: span 2;
+      justify-self: center;
+    }
   }
 }
 </style>
