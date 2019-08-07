@@ -33,6 +33,9 @@
               <option value="strong">Strong (7.5% +)</option>
             </select>
           </BeerFilter>
+
+          <button v-show="!showFavourites" class="btn" @click="toggleFavourites">Show favourites</button>
+          <button v-show="showFavourites" class="btn" @click="toggleFavourites">Show all beers</button>
         </aside>
 
         <div class="beer-list" v-if="beers">
@@ -66,8 +69,15 @@ export default {
       errored: false,
       errors: [],
       beerSearch: '',
-      beerStrength: 'all'
+      beerStrength: 'all',
+      isFavourites: false,
+      showFavourites: false
     };
+  },
+  methods: {
+    toggleFavourites() {
+      return (this.showFavourites = !this.showFavourites);
+    }
   },
   computed: {
     /**
@@ -94,6 +104,13 @@ export default {
           };
 
           return strengths[this.beerStrength];
+        })
+        .filter(beer => {
+          if (this.showFavourites) {
+            return beer.isFavourite;
+          }
+
+          return beer;
         });
 
       return filtered;
@@ -101,7 +118,7 @@ export default {
   },
   created() {
     axios
-      .get('https://api.punkapi.com/v2/beers')
+      .get('https://api.punkapi.com/v2/beers?per_page=80')
       .then(response => {
         this.beers = response.data;
 
@@ -112,7 +129,8 @@ export default {
           description: beer.description,
           image_url: beer.image_url,
           abv: beer.abv,
-          food_pairing: beer.food_pairing
+          food_pairing: beer.food_pairing,
+          isFavourite: false
         }));
       })
       .catch(error => {
@@ -128,6 +146,10 @@ export default {
 html {
   box-sizing: border-box;
   font-size: 16px;
+}
+
+body {
+  min-height: 100vh;
 }
 
 *,
@@ -179,9 +201,22 @@ h6 {
   text-transform: uppercase;
 }
 
+.btn {
+  width: 100%;
+  padding: 0.5rem;
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background-color: #de0000;
+  border: transparent;
+  cursor: pointer;
+}
+
 .container {
   width: 96%;
-  max-width: 80rem;
+  max-width: 90rem;
   margin-right: auto;
   margin-left: auto;
 }
@@ -221,6 +256,11 @@ h6 {
 .sidebar {
   display: flex;
   flex-direction: column;
+
+  @media screen and (min-width: 48rem) {
+    position: sticky;
+    top: 1rem;
+  }
 
   @media screen and (min-width: 48rem) {
     grid-column: 1/4;
