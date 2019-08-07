@@ -42,7 +42,7 @@
           <p
             v-if="filterBeers.length === 0"
             class="beer-list__empty"
-          >No beers available to show, please try adjusting your filter criteria.</p>
+          >No beers available to show, please try adjusting your filter criteria, or adding your favourite beer.</p>
 
           <Beer v-for="beer in filterBeers" :beer="beer" :key="beer.id" />
         </div>
@@ -70,7 +70,6 @@ export default {
       errors: [],
       beerSearch: '',
       beerStrength: 'all',
-      isFavourites: false,
       showFavourites: false
     };
   },
