@@ -1,5 +1,5 @@
 <template>
-  <div class="beer">
+  <div class="beer" :class="{ 'beer--favourite': beer.isFavourite }">
     <div class="beer__media">
       <img class="beer__img" :src="beer.image_url" :alt="beer.name" data-test="beer-image" />
     </div>
@@ -19,6 +19,17 @@
         </div>
 
         <p class="beer__description" data-test="beer-description">{{ beer.description }}</p>
+
+        <button
+          v-show="!beer.isFavourite"
+          class="beer__btn btn"
+          @click="isBeerFavourite"
+        >Add to favourites</button>
+        <button
+          v-show="beer.isFavourite"
+          class="beer__btn btn"
+          @click="isBeerFavourite"
+        >Remove from favourites</button>
       </div>
 
       <div class="beer__pairings">
@@ -44,6 +55,11 @@ export default {
   props: {
     beer: Object
   },
+  methods: {
+    isBeerFavourite() {
+      return (this.beer.isFavourite = !this.beer.isFavourite);
+    }
+  },
   computed: {
     /**
      * Only show the first three food pairing suggestins.
@@ -62,8 +78,12 @@ export default {
 .beer {
   display: flex;
 
+  &--favourite {
+    background-color: #ddd;
+  }
+
   &__media {
-    margin-right: 1rem;
+    padding: 1rem;
   }
 
   &__img {
@@ -128,6 +148,10 @@ export default {
   &__description {
     margin-bottom: 1.5rem;
     font-size: 0.875rem;
+  }
+
+  &__btn {
+    margin-bottom: 1rem;
   }
 
   &__pairings-title {
