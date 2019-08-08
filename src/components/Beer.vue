@@ -20,16 +20,7 @@
 
         <p class="beer__description" data-test="beer-description">{{ beer.description }}</p>
 
-        <button
-          v-show="!beer.isFavourite"
-          class="beer__btn btn"
-          @click="isBeerFavourite"
-        >Add to favourites</button>
-        <button
-          v-show="beer.isFavourite"
-          class="beer__btn btn"
-          @click="isBeerFavourite"
-        >Remove from favourites</button>
+        <button class="beer__btn btn" @click="toggleIsFavourite">{{ beerFavouriteText }}</button>
       </div>
 
       <div class="beer__pairings">
@@ -56,8 +47,13 @@ export default {
     beer: Object
   },
   methods: {
-    isBeerFavourite() {
-      return (this.beer.isFavourite = !this.beer.isFavourite);
+    /**
+     * Toggles the state of isFavourite.
+     *
+     * @returns {Boolean} The state of isFavourite.
+     */
+    toggleIsFavourite() {
+      this.beer.isFavourite = !this.beer.isFavourite;
     }
   },
   computed: {
@@ -69,6 +65,16 @@ export default {
     foodPairings() {
       const items = this.beer.food_pairing;
       return items.slice(0, 3);
+    },
+    /**
+     * Toggles the beer favourite button text.
+     *
+     * @returns {String} The button text.
+     */
+    beerFavouriteText() {
+      return this.beer.isFavourite
+        ? 'Remove from favourites'
+        : 'Add to favourites';
     }
   }
 };
