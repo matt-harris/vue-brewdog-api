@@ -34,8 +34,7 @@
             </select>
           </BeerFilter>
 
-          <button v-show="!showFavourites" class="btn" @click="toggleFavourites">Show favourites</button>
-          <button v-show="showFavourites" class="btn" @click="toggleFavourites">Show all beers</button>
+          <button class="btn" @click="toggleFavourites">{{ showFavouriteText }}</button>
         </aside>
 
         <div class="beer-list" v-if="beers">
@@ -74,8 +73,13 @@ export default {
     };
   },
   methods: {
+    /**
+     * Toggles the state of showFavourites.
+     *
+     * @returns {Boolean} The state of showFavourites.
+     */
     toggleFavourites() {
-      return (this.showFavourites = !this.showFavourites);
+      this.showFavourites = !this.showFavourites;
     }
   },
   computed: {
@@ -113,6 +117,14 @@ export default {
         });
 
       return filtered;
+    },
+    /**
+     * Toggles the show favourite button text.
+     *
+     * @returns {String} The button text.
+     */
+    showFavouriteText() {
+      return this.showFavourites ? 'Show all beers' : 'Show favourites';
     }
   },
   created() {
@@ -211,6 +223,7 @@ h6 {
   background-color: #de0000;
   border: transparent;
   cursor: pointer;
+  outline: none;
 }
 
 .container {
