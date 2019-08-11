@@ -49,8 +49,6 @@ export default {
   methods: {
     /**
      * Toggles the state of isFavourite.
-     *
-     * @returns {Boolean} The state of isFavourite.
      */
     toggleIsFavourite() {
       this.beer.isFavourite = !this.beer.isFavourite;

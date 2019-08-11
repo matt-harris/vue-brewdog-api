@@ -75,8 +75,6 @@ export default {
   methods: {
     /**
      * Toggles the state of showFavourites.
-     *
-     * @returns {Boolean} The state of showFavourites.
      */
     toggleFavourites() {
       this.showFavourites = !this.showFavourites;
