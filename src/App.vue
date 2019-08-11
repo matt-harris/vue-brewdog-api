@@ -43,7 +43,12 @@
             class="beer-list__empty"
           >No beers available to show, please try adjusting your filter criteria, or adding your favourite beer.</p>
 
-          <Beer v-for="beer in filterBeers" :beer="beer" :key="beer.id" />
+          <Beer
+            v-for="beer in filterBeers"
+            :beer="beer"
+            @sendFavouriteId="updateMyFavourites"
+            :key="beer.id"
+          />
         </div>
       </section>
     </main>
@@ -69,7 +74,8 @@ export default {
       errors: [],
       beerSearch: '',
       beerStrength: 'all',
-      showFavourites: false
+      showFavourites: false,
+      myFavourites: []
     };
   },
   methods: {
@@ -80,6 +86,29 @@ export default {
      */
     toggleFavourites() {
       this.showFavourites = !this.showFavourites;
+    },
+    /**
+     * Updates myFavourites array of beer ID's.
+     *
+     * @returns {Array} The list of favourite beer ids.
+     */
+    updateMyFavourites(id) {
+      const beerId = !!this.myFavourites.find(beer => beer === id);
+
+      beerId
+        ? (this.myFavourites = this.myFavourites.filter(beer => beer !== id))
+        : this.myFavourites.push(id);
+
+      this.saveMyFavourites();
+    },
+    /**
+     * Save myFavourites array of beer ID's to localStorage.
+     *
+     * @returns {Array} The json serialize favourite beer id values.
+     */
+    saveMyFavourites() {
+      const parsed = JSON.stringify(this.myFavourites);
+      localStorage.setItem('beerFavourites', parsed);
     }
   },
   computed: {
@@ -149,6 +178,15 @@ export default {
         this.errors.push(error);
       })
       .finally(() => (this.loading = false));
+  },
+  mounted() {
+    if (localStorage.getItem('beerFavourites')) {
+      try {
+        this.myFavourites = JSON.parse(localStorage.getItem('beerFavourites'));
+      } catch (e) {
+        localStorage.removeItem('beerFavourites');
+      }
+    }
   }
 };
 </script>
