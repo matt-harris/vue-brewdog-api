@@ -33,13 +33,15 @@
               <option value="strong">Strong (7.5% +)</option>
             </select>
           </BeerFilter>
+
+          <button class="btn" @click="toggleFavourites">{{ showFavouriteText }}</button>
         </aside>
 
         <div class="beer-list" v-if="beers">
           <p
             v-if="filterBeers.length === 0"
             class="beer-list__empty"
-          >No beers available to show, please try adjusting your filter criteria.</p>
+          >No beers available to show, please try adjusting your filter criteria, or adding your favourite beer.</p>
 
           <Beer v-for="beer in filterBeers" :beer="beer" :key="beer.id" />
         </div>
@@ -66,8 +68,17 @@ export default {
       errored: false,
       errors: [],
       beerSearch: '',
-      beerStrength: 'all'
+      beerStrength: 'all',
+      showFavourites: false
     };
+  },
+  methods: {
+    /**
+     * Toggles the state of showFavourites.
+     */
+    toggleFavourites() {
+      this.showFavourites = !this.showFavourites;
+    }
   },
   computed: {
     /**
@@ -94,14 +105,29 @@ export default {
           };
 
           return strengths[this.beerStrength];
+        })
+        .filter(beer => {
+          if (this.showFavourites) {
+            return beer.isFavourite;
+          }
+
+          return beer;
         });
 
       return filtered;
+    },
+    /**
+     * Toggles the show favourite button text.
+     *
+     * @returns {String} The button text.
+     */
+    showFavouriteText() {
+      return this.showFavourites ? 'Show all beers' : 'Show favourites';
     }
   },
   created() {
     axios
-      .get('https://api.punkapi.com/v2/beers')
+      .get('https://api.punkapi.com/v2/beers?per_page=80')
       .then(response => {
         this.beers = response.data;
 
@@ -112,7 +138,8 @@ export default {
           description: beer.description,
           image_url: beer.image_url,
           abv: beer.abv,
-          food_pairing: beer.food_pairing
+          food_pairing: beer.food_pairing,
+          isFavourite: false
         }));
       })
       .catch(error => {
@@ -128,6 +155,10 @@ export default {
 html {
   box-sizing: border-box;
   font-size: 16px;
+}
+
+body {
+  min-height: 100vh;
 }
 
 *,
@@ -179,9 +210,23 @@ h6 {
   text-transform: uppercase;
 }
 
+.btn {
+  width: 100%;
+  padding: 0.5rem;
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background-color: #de0000;
+  border: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
 .container {
   width: 96%;
-  max-width: 80rem;
+  max-width: 90rem;
   margin-right: auto;
   margin-left: auto;
 }
@@ -221,6 +266,11 @@ h6 {
 .sidebar {
   display: flex;
   flex-direction: column;
+
+  @media screen and (min-width: 48rem) {
+    position: sticky;
+    top: 1rem;
+  }
 
   @media screen and (min-width: 48rem) {
     grid-column: 1/4;

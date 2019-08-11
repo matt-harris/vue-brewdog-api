@@ -1,5 +1,5 @@
 <template>
-  <div class="beer">
+  <div class="beer" :class="{ 'beer--favourite': beer.isFavourite }">
     <div class="beer__media">
       <img class="beer__img" :src="beer.image_url" :alt="beer.name" data-test="beer-image" />
     </div>
@@ -19,6 +19,8 @@
         </div>
 
         <p class="beer__description" data-test="beer-description">{{ beer.description }}</p>
+
+        <button class="beer__btn btn" @click="toggleIsFavourite">{{ beerFavouriteText }}</button>
       </div>
 
       <div class="beer__pairings">
@@ -44,6 +46,14 @@ export default {
   props: {
     beer: Object
   },
+  methods: {
+    /**
+     * Toggles the state of isFavourite.
+     */
+    toggleIsFavourite() {
+      this.beer.isFavourite = !this.beer.isFavourite;
+    }
+  },
   computed: {
     /**
      * Only show the first three food pairing suggestins.
@@ -53,6 +63,16 @@ export default {
     foodPairings() {
       const items = this.beer.food_pairing;
       return items.slice(0, 3);
+    },
+    /**
+     * Toggles the beer favourite button text.
+     *
+     * @returns {String} The button text.
+     */
+    beerFavouriteText() {
+      return this.beer.isFavourite
+        ? 'Remove from favourites'
+        : 'Add to favourites';
     }
   }
 };
@@ -62,8 +82,12 @@ export default {
 .beer {
   display: flex;
 
+  &--favourite {
+    background-color: #ddd;
+  }
+
   &__media {
-    margin-right: 1rem;
+    padding: 1rem;
   }
 
   &__img {
@@ -128,6 +152,10 @@ export default {
   &__description {
     margin-bottom: 1.5rem;
     font-size: 0.875rem;
+  }
+
+  &__btn {
+    margin-bottom: 1rem;
   }
 
   &__pairings-title {
