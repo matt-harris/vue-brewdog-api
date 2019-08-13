@@ -46,7 +46,7 @@
           <Beer
             v-for="beer in filterBeers"
             :beer="beer"
-            @sendFavouriteId="updateMyFavourites"
+            @send-favourite-id="updateMyFavourites"
             :key="beer.id"
           />
         </div>
@@ -89,11 +89,13 @@ export default {
      * Updates myFavourites array of beer ID's.
      */
     updateMyFavourites(id) {
-      const beerId = !!this.myFavourites.find(beer => beer === id);
+      const index = this.myFavourites.indexOf(id);
 
-      beerId
-        ? (this.myFavourites = this.myFavourites.filter(beer => beer !== id))
-        : this.myFavourites.push(id);
+      if (index !== -1) {
+        this.myFavourites.splice(index, 1);
+      } else {
+        this.myFavourites.push(id);
+      }
 
       this.saveMyFavourites();
     },
@@ -169,7 +171,7 @@ export default {
 
         this.beers = this.beers.map(beer => {
           // Is the current beer in my favourites array?
-          const beerInFavourites = !!this.myFavourites.find(
+          const isFavourite = !!this.myFavourites.find(
             element => element === beer.id
           );
 
@@ -182,7 +184,7 @@ export default {
             image_url: beer.image_url,
             abv: beer.abv,
             food_pairing: beer.food_pairing,
-            isFavourite: beerInFavourites ? true : false
+            isFavourite
           };
         });
       })
