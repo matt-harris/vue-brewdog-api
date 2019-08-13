@@ -52,7 +52,7 @@ export default {
      */
     toggleIsFavourite() {
       this.beer.isFavourite = !this.beer.isFavourite;
-      this.$emit('sendFavouriteId', this.beer.id);
+      this.$emit('send-favourite-id', this.beer.id);
     }
   },
   computed: {
