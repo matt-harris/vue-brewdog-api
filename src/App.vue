@@ -43,7 +43,12 @@
             class="beer-list__empty"
           >No beers available to show, please try adjusting your filter criteria, or adding your favourite beer.</p>
 
-          <Beer v-for="beer in filterBeers" :beer="beer" :key="beer.id" />
+          <Beer
+            v-for="beer in filterBeers"
+            :beer="beer"
+            @send-favourite-id="updateMyFavourites"
+            :key="beer.id"
+          />
         </div>
       </section>
     </main>
@@ -69,7 +74,8 @@ export default {
       errors: [],
       beerSearch: '',
       beerStrength: 'all',
-      showFavourites: false
+      showFavourites: false,
+      myFavourites: []
     };
   },
   methods: {
@@ -78,6 +84,27 @@ export default {
      */
     toggleFavourites() {
       this.showFavourites = !this.showFavourites;
+    },
+    /**
+     * Updates myFavourites array of beer ID's.
+     */
+    updateMyFavourites(id) {
+      const index = this.myFavourites.indexOf(id);
+
+      if (index !== -1) {
+        this.myFavourites.splice(index, 1);
+      } else {
+        this.myFavourites.push(id);
+      }
+
+      this.saveMyFavourites();
+    },
+    /**
+     * Save myFavourites array of beer ID's to localStorage.
+     */
+    saveMyFavourites() {
+      const parsed = JSON.stringify(this.myFavourites);
+      localStorage.setItem('beerFavourites', parsed);
     }
   },
   computed: {
@@ -131,16 +158,35 @@ export default {
       .then(response => {
         this.beers = response.data;
 
-        this.beers = this.beers.map(beer => ({
-          id: beer.id,
-          name: beer.name,
-          tagline: beer.tagline,
-          description: beer.description,
-          image_url: beer.image_url,
-          abv: beer.abv,
-          food_pairing: beer.food_pairing,
-          isFavourite: false
-        }));
+        // If we have favourite beers in localStorage, retrieve them.
+        if (localStorage.getItem('beerFavourites')) {
+          try {
+            this.myFavourites = JSON.parse(
+              localStorage.getItem('beerFavourites')
+            );
+          } catch (e) {
+            localStorage.removeItem('beerFavourites');
+          }
+        }
+
+        this.beers = this.beers.map(beer => {
+          // Is the current beer in my favourites array?
+          const isFavourite = !!this.myFavourites.find(
+            element => element === beer.id
+          );
+
+          // Beer object.
+          return {
+            id: beer.id,
+            name: beer.name,
+            tagline: beer.tagline,
+            description: beer.description,
+            image_url: beer.image_url,
+            abv: beer.abv,
+            food_pairing: beer.food_pairing,
+            isFavourite
+          };
+        });
       })
       .catch(error => {
         this.errored = true;
